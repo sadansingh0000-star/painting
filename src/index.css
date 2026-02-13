@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#FDF8F2] text-gray-900 font-['Poppins'] font-light;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-['Playfair_Display'] font-semibold tracking-wide;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Responsive breakpoints */
+  @media (min-width: 640px) {
+    .container-custom {
+      max-width: 640px;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .container-custom {
+      max-width: 768px;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container-custom {
+      max-width: 1024px;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .container-custom {
+      max-width: 1280px;
+    }
+  }
+}
