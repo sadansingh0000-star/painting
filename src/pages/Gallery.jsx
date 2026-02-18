@@ -1,129 +1,140 @@
 import { useImages } from '../hooks/useImages';
-import { MessageCircle, X, Grid, LayoutGrid } from 'lucide-react';
+import { ShoppingBag, X } from 'lucide-react';
 import { useState } from 'react';
+import { useCart } from '../context/CartContext';
 
 export default function Gallery() {
   const { images, loading } = useImages();
+  const { addToCart } = useCart();
   const [selectedImage, setSelectedImage] = useState(null);
-  const [layout, setLayout] = useState('grid'); // grid or masonry
+  const [activeFilter, setActiveFilter] = useState('all');
+  
+  const categories = ['all', ...new Set(images.map(img => img.category))];
+  const filtered = activeFilter === 'all' ? images : images.filter(img => img.category === activeFilter);
 
-  const handleWhatsApp = (image) => {
-    const message = `Hi! I'm interested in the artwork "${image.title}". Can you share more details?`;
-    window.open(`https://wa.me/919027352937?text=${encodeURIComponent(message)}`, '_blank');
+  const handleAddToCart = (item, e) => {
+    e.stopPropagation();
+    addToCart({
+      id: item.public_id,
+      title: item.title,
+      price: item.price, // <-- Direct number
+      image: item.url,
+      category: item.category
+    });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#E14749]"></div>
+      <div className="container-custom py-20 text-center">
+        <div className="animate-spin w-8 h-8 border-2 border-[#E14749] border-t-transparent rounded-full mx-auto"></div>
       </div>
     );
   }
 
   return (
     <>
-      {/* Hero */}
-      <div className="relative h-[50vh] min-h-[400px] overflow-hidden">
-        <img
-          src={images[0]?.url}
-          alt="Gallery"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/40 flex items-center">
-          <div className="container-custom">
-            <h1 className="font-playfair text-5xl md:text-7xl text-white mb-4 animate-fade-in">
-              Art <span className="text-[#E14749]">Gallery</span>
-            </h1>
-            <p className="font-poppins text-white/80 text-xl max-w-2xl">
-              Explore our collection of original paintings
-            </p>
-          </div>
+      {/* Header */}
+      <div className="bg-white pt-24 pb-12 border-b">
+        <div className="container-custom text-center">
+          <h1 className="font-montserrat text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            ART GALLERY
+          </h1>
+          <p className="font-poppins text-gray-500">
+            Explore our collection of original paintings
+          </p>
         </div>
       </div>
 
-      {/* Gallery Controls */}
-      <div className="border-b sticky top-16 bg-white/95 backdrop-blur-md z-40">
+      {/* Filters */}
+      <div className="bg-white border-b sticky top-16 z-40">
         <div className="container-custom py-4">
-          <div className="flex justify-between items-center">
-            <p className="font-poppins text-gray-600">
-              <span className="font-semibold text-[#E14749]">{images.length}</span> artworks
-            </p>
-            <button
-              onClick={() => setLayout(layout === 'grid' ? 'masonry' : 'grid')}
-              className="p-2 bg-gray-100 rounded-lg hover:bg-[#E14749] hover:text-white transition-colors"
-            >
-              {layout === 'grid' ? <LayoutGrid size={20} /> : <Grid size={20} />}
-            </button>
+          <div className="flex items-center justify-between">
+            <div className="flex gap-6 overflow-x-auto pb-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveFilter(cat)}
+                  className={`font-montserrat text-xs font-semibold tracking-wider uppercase whitespace-nowrap pb-2 border-b-2 transition-colors ${
+                    activeFilter === cat
+                      ? 'border-[#E14749] text-[#E14749]'
+                      : 'border-transparent text-gray-500 hover:text-gray-900'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <span className="font-poppins text-sm text-gray-500 hidden md:block">
+              {filtered.length} products
+            </span>
           </div>
         </div>
       </div>
 
       {/* Gallery Grid */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="container-custom">
-          <div className={`grid gap-6 ${
-            layout === 'grid' 
-              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-              : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-          }`}>
-            {images.map((image, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {filtered.map((item) => (
               <div
-                key={image.public_id}
-                className={`group relative overflow-hidden rounded-xl cursor-pointer transform hover:scale-[1.02] transition-all duration-500 ${
-                  layout === 'masonry' && index % 3 === 1 ? 'row-span-2' : ''
-                }`}
-                onClick={() => setSelectedImage(image)}
+                key={item.public_id}
+                className="group cursor-pointer"
+                onClick={() => setSelectedImage(item)}
               >
-                <img
-                  src={image.url}
-                  alt={image.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="font-playfair text-white text-lg">{image.title}</h3>
-                    <p className="font-poppins text-white/80 text-sm">{image.category}</p>
-                  </div>
+                <div className="relative overflow-hidden bg-gray-100 mb-3">
+                  <img
+                    src={item.url}
+                    alt={item.title}
+                    className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <button 
+                    onClick={(e) => handleAddToCart(item, e)}
+                    className="absolute bottom-3 right-3 w-10 h-10 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-[#E14749] hover:text-white"
+                  >
+                    <ShoppingBag size={18} />
+                  </button>
                 </div>
+                <h3 className="font-montserrat text-sm font-semibold text-gray-900 mb-1">{item.title}</h3>
+                <p className="font-poppins text-xs text-gray-500 mb-2">{item.category}</p>
+                <p className="font-montserrat text-sm font-bold text-[#E14749]">${item.price}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Lightbox */}
+      {/* Quick View Modal */}
       {selectedImage && (
-        <div 
-          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative max-w-6xl w-full" onClick={e => e.stopPropagation()}>
-            <img
-              src={selectedImage.url}
-              alt={selectedImage.title}
-              className="w-full h-auto rounded-2xl"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black p-8 rounded-b-2xl">
-              <div className="flex justify-between items-end">
-                <div>
-                  <h2 className="font-playfair text-white text-2xl mb-2">{selectedImage.title}</h2>
-                  <p className="font-poppins text-white/80">{selectedImage.category}</p>
-                </div>
-                <button
-                  onClick={() => handleWhatsApp(selectedImage)}
-                  className="px-6 py-3 bg-[#25D366] text-white rounded-xl hover:bg-[#128C7E] transition-colors flex items-center gap-2"
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={() => setSelectedImage(null)}>
+          <div className="bg-white max-w-4xl w-full max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="grid md:grid-cols-2">
+              <div className="bg-gray-100">
+                <img src={selectedImage.url} alt={selectedImage.title} className="w-full h-full object-cover" />
+              </div>
+              <div className="p-8">
+                <h2 className="font-montserrat text-2xl font-bold text-gray-900 mb-2">{selectedImage.title}</h2>
+                <p className="font-poppins text-gray-500 mb-4">{selectedImage.category}</p>
+                <p className="font-montserrat text-3xl font-bold text-[#E14749] mb-6">${selectedImage.price}</p>
+                <button 
+                  onClick={() => {
+                    addToCart({
+                      id: selectedImage.public_id,
+                      title: selectedImage.title,
+                      price: selectedImage.price,
+                      image: selectedImage.url,
+                      category: selectedImage.category
+                    });
+                    setSelectedImage(null);
+                  }}
+                  className="w-full px-6 py-4 bg-[#E14749] text-white font-montserrat text-sm font-semibold tracking-wider hover:bg-[#C13535] transition-colors mb-4"
                 >
-                  <MessageCircle size={18} />
-                  Inquire
+                  ADD TO CART
+                </button>
+                <button className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-100" onClick={() => setSelectedImage(null)}>
+                  <X size={18} />
                 </button>
               </div>
             </div>
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 w-12 h-12 bg-black/50 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-[#E14749] transition-colors"
-            >
-              <X size={24} />
-            </button>
           </div>
         </div>
       )}
