@@ -1,35 +1,25 @@
 export default function Button({ 
   children, 
-  variant = "primary", 
-  size = "md",
-  className = "",
+  variant = 'primary', 
+  onClick,
+  className = '',
   ...props 
 }) {
+  const baseStyles = 'px-6 py-3 font-montserrat text-sm tracking-wider rounded-lg transition-all duration-300';
   
   const variants = {
-    primary: "bg-blue-600 hover:bg-blue-700 text-white",
-    secondary: "bg-gray-200 hover:bg-gray-300 text-gray-800",
-    outline: "border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
-  }
-
-  const sizes = {
-    sm: "px-4 py-2 text-sm",
-    md: "px-6 py-2.5 text-sm sm:text-base",
-    lg: "px-8 py-3 text-base sm:text-lg",
-    xl: "px-10 py-4 text-lg sm:text-xl"
-  }
+    primary: 'bg-[#E14749] text-white hover:bg-[#C13535] hover:shadow-lg',
+    secondary: 'border-2 border-[#E14749] text-[#E14749] hover:bg-[#E14749] hover:text-white',
+    outline: 'border-2 border-white text-white hover:bg-white hover:text-black'
+  };
 
   return (
     <button 
-      className={`
-        rounded-lg font-medium transition
-        ${variants[variant]}
-        ${sizes[size]}
-        ${className}
-      `}
+      className={`${baseStyles} ${variants[variant]} ${className}`}
+      onClick={onClick}
       {...props}
     >
       {children}
     </button>
-  )
+  );
 }

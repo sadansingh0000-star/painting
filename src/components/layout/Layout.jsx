@@ -1,15 +1,14 @@
-import Navbar from "./Navbar"
-import Footer from "./Footer"
+import Navbar from './Navbar';
+import FloatingWhatsApp from './FloatingWhatsApp';
 
 export default function Layout({ children }) {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen bg-[#FDF8F2]">
       <Navbar />
-      {/* Add padding-top to account for fixed navbar */}
-      <main className="flex-grow pt-20 md:pt-24">
+      <main className="pt-16 md:pt-20">
         {children}
       </main>
-      <Footer />
+      <FloatingWhatsApp />
     </div>
-  )
+  );
 }

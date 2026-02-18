@@ -1,105 +1,79 @@
-import { Link, NavLink } from "react-router-dom"
-import { useState, useEffect } from "react"
-import { Menu, X } from 'lucide-react'
+import { Link, NavLink } from 'react-router-dom';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 
 const navItems = [
-  { path: "/", label: "HOME" },
-  { path: "/about", label: "ABOUT" },
-  { path: "/services", label: "SERVICES" },
-  { path: "/portfolio", label: "PORTFOLIO" },
-  { path: "/contact", label: "CONTACT" }
-]
+  { path: '/', label: 'Home' },
+  { path: '/gallery', label: 'Gallery' },
+  { path: '/about', label: 'About' },
+  { path: '/contact', label: 'Contact' }
+];
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-500 ${
-      scrolled 
-        ? 'bg-white/95 backdrop-blur-md shadow-lg py-3' 
-        : 'bg-[#FDF8F2]/95 backdrop-blur-sm py-5'
-    }`}>
-      <div className="container-custom">
-        <div className="flex justify-between items-center">
+    <nav className="fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16 md:h-20">
           
           {/* Logo */}
-          <Link to="/" className="group">
-            <h2 className="font-['Playfair_Display'] text-2xl lg:text-3xl text-gray-900 group-hover:text-[#E14749] transition">
-              AARTI <span className="font-light">ART</span>
-            </h2>
-            <p className="font-['Montserrat'] text-[8px] sm:text-[10px] tracking-[0.5em] text-gray-500 group-hover:text-[#E14749] transition">
-              STUDIO
-            </p>
+          <Link to="/" className="text-2xl font-playfair text-gray-900">
+            AARTI <span className="text-[#E14749]">ART</span>
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8 lg:space-x-12">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={({ isActive }) => 
-                  `font-['Montserrat'] text-sm tracking-wider transition hover:text-[#E14749] relative group ${
-                    isActive ? 'text-[#E14749]' : 'text-gray-700'
+                className={({ isActive }) =>
+                  `font-montserrat text-sm tracking-wide transition-colors hover:text-[#E14749] ${
+                    isActive ? 'text-[#E14749] font-semibold' : 'text-gray-700'
                   }`
                 }
               >
                 {item.label}
-                <span className={`absolute -bottom-2 left-0 w-full h-0.5 bg-[#E14749] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ${
-                  ({ isActive }) => isActive ? 'scale-x-100' : ''
-                }`}></span>
               </NavLink>
             ))}
-            <button className="px-6 py-2.5 bg-[#E14749] text-white font-['Montserrat'] text-sm tracking-wider rounded-lg hover:bg-[#C13535] transition-all duration-300">
-              COMMISSION
+            <button className="px-5 py-2 bg-[#E14749] text-white font-montserrat text-sm rounded-lg hover:bg-[#C13535] transition-colors">
+              Commission
             </button>
           </div>
 
           {/* Mobile Menu Button */}
           <button 
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-gray-700 hover:text-[#E14749] transition"
+            className="md:hidden p-2 text-gray-700 hover:text-[#E14749]"
           >
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden mt-4 bg-white/95 backdrop-blur-md border border-[#FFE4E1] rounded-lg shadow-xl py-4">
+          <div className="md:hidden py-4 border-t">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
-                  `block py-3 px-6 font-['Montserrat'] text-base transition ${
-                    isActive 
-                      ? 'bg-[#E14749]/10 text-[#E14749]' 
-                      : 'text-gray-700 hover:bg-[#FDF8F2] hover:text-[#E14749]'
+                  `block py-3 font-montserrat transition-colors ${
+                    isActive ? 'text-[#E14749] font-semibold' : 'text-gray-700 hover:text-[#E14749]'
                   }`
                 }
               >
                 {item.label}
               </NavLink>
             ))}
-            <div className="px-6 mt-4">
-              <button className="w-full py-3 bg-[#E14749] text-white font-['Montserrat'] text-sm tracking-wider rounded-lg hover:bg-[#C13535] transition">
-                COMMISSION ARTWORK
-              </button>
-            </div>
+            <button className="w-full mt-4 px-5 py-3 bg-[#E14749] text-white font-montserrat text-sm rounded-lg">
+              Commission
+            </button>
           </div>
         )}
       </div>
     </nav>
-  )
+  );
 }
