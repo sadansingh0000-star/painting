@@ -122,7 +122,7 @@ export default function Gallery() {
                     </h3>
                   </Link>
                   <p className="font-poppins text-xs text-gray-500 mb-2">{item.category}</p>
-                  <p className="font-montserrat text-sm font-bold text-[#E14749]">${item.price}</p>
+                  <p className="font-montserrat text-sm font-bold text-[#E14749]">₹{item.price}</p>
                 </div>
               ))}
             </div>

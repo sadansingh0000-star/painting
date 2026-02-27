@@ -187,7 +187,7 @@ export const CartProvider = ({ children }) => {
       message += `${index + 1}. ${item.title} - $${item.price} x ${item.quantity} = $${(item.price * item.quantity)}\n`;
     });
     
-    message += `\n*Total Amount:* $${state.totalPrice}`;
+    message += `\n*Total Amount:* ₹${state.totalPrice}`;
     message += `\n\nPlease confirm availability and payment details.`;
     
     const encodedMessage = encodeURIComponent(message);
