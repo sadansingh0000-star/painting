@@ -232,7 +232,7 @@ export default function Navbar() {
                                     </button>
                                   </div>
                                   <p className="font-montserrat text-sm font-bold text-[#E14749]">
-                                    ${item.price * item.quantity}
+                                    ₹{item.price * item.quantity}
                                   </p>
                                 </div>
                               </div>
@@ -243,7 +243,7 @@ export default function Navbar() {
                         <div className="p-4 border-t bg-gray-50 sticky bottom-0">
                           <div className="flex justify-between mb-3">
                             <span className="font-poppins text-gray-600">Subtotal</span>
-                            <span className="font-montserrat font-bold text-gray-900">${cart.totalPrice}</span>
+                            <span className="font-montserrat font-bold text-gray-900">₹{cart.totalPrice}</span>
                           </div>
                           <Link 
                             to="/cart"
@@ -257,9 +257,9 @@ export default function Navbar() {
                               const phoneNumber = '918019574565';
                               let message = 'Hi! I would like to purchase these items:\n\n';
                               cart.items.forEach((item, index) => {
-                                message += `${index + 1}. ${item.title} - $${item.price} x ${item.quantity} = $${item.price * item.quantity}\n`;
+                                message += `${index + 1}. ${item.title} - ₹${item.price} x ${item.quantity} = ₹${item.price * item.quantity}\n`;
                               });
-                              message += `\nTotal: $${cart.totalPrice}`;
+                              message += `\nTotal: ₹${cart.totalPrice}`;
                               window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
                               setCartOpen(false);
                             }}

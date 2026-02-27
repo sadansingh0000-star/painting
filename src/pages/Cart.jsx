@@ -77,7 +77,7 @@ export default function Cart() {
                         </button>
                       </div>
                       <p className="font-montserrat font-bold text-[#E14749]">
-                        ${item.price * item.quantity}
+                        ₹{item.price * item.quantity}
                       </p>
                     </div>
                   </div>
@@ -93,7 +93,7 @@ export default function Cart() {
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">
                     <span className="font-poppins text-gray-600">Subtotal</span>
-                    <span className="font-montserrat font-semibold">${cart.totalPrice}</span>
+                    <span className="font-montserrat font-semibold">₹{cart.totalPrice}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="font-poppins text-gray-600">Shipping</span>
@@ -102,7 +102,7 @@ export default function Cart() {
                   <div className="border-t pt-3 mt-3">
                     <div className="flex justify-between font-bold">
                       <span className="font-montserrat">Total</span>
-                      <span className="font-montserrat text-[#E14749]">${cart.totalPrice}</span>
+                      <span className="font-montserrat text-[#E14749]">₹{cart.totalPrice}</span>
                     </div>
                   </div>
                 </div>

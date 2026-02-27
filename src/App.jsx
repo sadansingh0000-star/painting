@@ -6,6 +6,7 @@ import Gallery from './pages/Gallery';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
+import ProductDetail from './pages/ProductDetail'; // <-- IMPORT ADD KARO
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/product/:id" element={<ProductDetail />} /> {/* <-- NEW ROUTE */}
           </Routes>
         </Layout>
       </CartProvider>
