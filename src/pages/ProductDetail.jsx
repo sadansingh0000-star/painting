@@ -3,17 +3,17 @@ import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { 
   ShoppingBag, Heart, Share2, ChevronLeft, Truck, Shield, 
-  RotateCcw, MessageCircle, Minus, Plus, Package, IndianRupee,
-  Palette, Ruler, Frame, Award, Star
+  RotateCcw, MessageCircle, Minus, Plus, Package, 
+  Palette, Ruler, Calendar, Info, Tag, Award
 } from 'lucide-react';
-import { IMAGES } from '../api/cloudinary';
+import { useImages } from '../hooks/useImages';
 
 export default function ProductDetail() {
   const { id } = useParams();
+  const { images } = useImages();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('description');
   const [addedToCart, setAddedToCart] = useState(false);
   const { addToCart } = useCart();
 
@@ -22,15 +22,17 @@ export default function ProductDetail() {
     setLoading(true);
     
     setTimeout(() => {
-      const found = IMAGES.find(img => img.public_id === id);
+      const found = images.find(img => img.public_id === id);
       if (found) {
         setProduct(found);
       }
       setLoading(false);
-    }, 500);
-  }, [id]);
+    }, 300);
+  }, [id, images]);
 
   const handleAddToCart = () => {
+    if (product.isSold) return;
+    
     addToCart({
       id: product.public_id,
       title: product.title,
@@ -45,13 +47,15 @@ export default function ProductDetail() {
   };
 
   const handleWhatsApp = () => {
-    const message = `Hi! I'm interested in "${product.title}" (${product.category}). Price: ₹${product.price}. Can you share more details?`;
+    if (product.isSold) return;
+    
+    const message = `Hi! I'm interested in "${product.title}" (${product.category}). Price: ₹${product.price}. SKU: ${product.sku}. Size: ${product.size}. Year: ${product.year}. Medium: ${product.medium}. Description: ${product.description}. Can you share more details?`;
     window.open(`https://wa.me/918019574565?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   if (loading) {
     return (
-      <div className="product-detail-page flex items-center justify-center">
+      <div className="w-full min-h-screen bg-gradient-to-br from-[#667eea] to-[#764ba2] pt-20 flex items-center justify-center">
         <div className="text-center">
           <div className="relative w-20 h-20 mx-auto mb-4">
             <div className="absolute inset-0 border-4 border-white/20 rounded-full"></div>
@@ -65,12 +69,12 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="product-detail-page flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-8">
+      <div className="w-full min-h-screen bg-gradient-to-br from-[#667eea] to-[#764ba2] pt-20 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8 bg-white/10 backdrop-blur-md rounded-2xl">
           <Package size={64} className="mx-auto text-white/60 mb-4" />
           <h2 className="text-2xl font-['Poppins'] font-bold text-white mb-4">Product Not Found</h2>
           <p className="text-white/80 mb-8">The artwork you're looking for doesn't exist.</p>
-          <Link to="/gallery" className="ecomm-btn inline-flex items-center gap-2">
+          <Link to="/gallery" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#667eea] font-['Poppins'] font-medium rounded-lg hover:shadow-xl transition-all">
             <ChevronLeft size={18} />
             Back to Gallery
           </Link>
@@ -79,176 +83,253 @@ export default function ProductDetail() {
     );
   }
 
-  const details = {
-    sku: product.public_id.split('_')[0],
-    medium: "Acrylic on Canvas",
-    size: "12 x 16 inches",
-    frame: "Optional (+₹199)",
-    year: "2024",
-    artist: "Aarti Kumar Singh"
-  };
+  // Calculate discount percentage if originalPrice exists
+  const discountPercentage = product.originalPrice 
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : 0;
 
   return (
-    <div className="product-detail-page">
-      <div className="product-detail-container">
-        {/* Breadcrumb */}
-        <nav className="product-breadcrumb">
-          <Link to="/">Home</Link>
-          <span>/</span>
-          <Link to="/gallery">Gallery</Link>
-          <span>/</span>
-          <span className="text-white">{product.title}</span>
-        </nav>
+    <div className="w-full min-h-screen bg-gradient-to-br from-[#667eea] to-[#764ba2] pt-20">
+      <div className="w-full px-4 py-8">
+        <div className="w-full max-w-7xl mx-auto">
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-white/80 mb-6 overflow-x-auto pb-2">
+            <Link to="/" className="hover:text-white transition-colors whitespace-nowrap">Home</Link>
+            <span className="text-white/40">/</span>
+            <Link to="/gallery" className="hover:text-white transition-colors whitespace-nowrap">Gallery</Link>
+            <span className="text-white/40">/</span>
+            <span className="text-white truncate max-w-[200px]">{product.title}</span>
+          </nav>
 
-        {/* Main Content */}
-        <div className="product-detail-grid">
-          {/* Left - Image */}
-          <div className="product-image-container">
-            <img 
-              src={product.url} 
-              alt={product.title}
-              className="product-main-image"
-            />
-          </div>
-
-          {/* Right - Details */}
-          <div className="product-info">
-            <h1 className="product-info-title">{product.title}</h1>
-            
-            <div className="product-info-price">
-              <span className="product-current-price">₹{product.price.toLocaleString('en-IN')}</span>
-              <span className="product-original-price">₹{Math.round(product.price * 1.3).toLocaleString('en-IN')}</span>
-              <span className="product-stock-badge">In Stock</span>
-            </div>
-
-            <p className="product-description">
-              Beautiful artwork created with premium quality materials. Each piece is hand-painted by skilled artists, ensuring unique character and attention to detail.
-            </p>
-
-            {/* Specifications */}
-            <div className="product-specs-grid">
-              <div className="product-spec-item">
-                <Palette size={20} className="product-spec-icon" />
-                <p className="product-spec-label">Medium</p>
-                <p className="product-spec-value">{details.medium}</p>
-              </div>
-              <div className="product-spec-item">
-                <Ruler size={20} className="product-spec-icon" />
-                <p className="product-spec-label">Size</p>
-                <p className="product-spec-value">{details.size}</p>
-              </div>
-              <div className="product-spec-item">
-                <Frame size={20} className="product-spec-icon" />
-                <p className="product-spec-label">Frame</p>
-                <p className="product-spec-value">Optional</p>
-              </div>
-            </div>
-
-            {/* Quantity */}
-            <div className="product-quantity">
-              <span className="product-quantity-label">Quantity:</span>
-              <div className="product-quantity-controls">
-                <button 
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="product-quantity-btn"
-                >
-                  <Minus size={16} />
-                </button>
-                <span className="product-quantity-value">{quantity}</span>
-                <button 
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="product-quantity-btn"
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="product-action-buttons">
-              <button 
-                onClick={handleAddToCart}
-                className="product-add-to-cart"
-              >
-                <ShoppingBag size={18} />
-                {addedToCart ? 'ADDED TO CART!' : 'ADD TO CART'}
-              </button>
-              <button 
-                onClick={handleWhatsApp}
-                className="product-whatsapp-btn"
-              >
-                <MessageCircle size={18} />
-                BUY ON WHATSAPP
-              </button>
-            </div>
-
-            {/* Tabs */}
-            <div className="product-tabs">
-              <div className="product-tab-buttons">
-                <button
-                  onClick={() => setActiveTab('description')}
-                  className={`product-tab ${activeTab === 'description' ? 'active' : ''}`}
-                >
-                  Description
-                </button>
-                <button
-                  onClick={() => setActiveTab('details')}
-                  className={`product-tab ${activeTab === 'details' ? 'active' : ''}`}
-                >
-                  Details
-                </button>
-              </div>
+          {/* Main Content */}
+          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-4 md:p-6 lg:p-8">
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-12">
               
-              <div className="product-tab-content">
-                {activeTab === 'description' ? (
-                  <p>
-                    This stunning {product.title} is a beautiful example of {product.category} art. 
-                    Created with premium quality materials and expert craftsmanship, this piece brings 
-                    life and emotion to any space. Each brushstroke tells a story, making it a unique 
-                    addition to your collection.
+              {/* Left Column - Image - FIXED WIDTH */}
+              <div className="space-y-4">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white/5">
+                  <img 
+                    src={product.url} 
+                    alt={product.title}
+                    className="w-full max-w-[500px] mx-auto h-[400px] md:h-[500px] lg:h-[550px] object-contain bg-black/20" 
+                    // ✅ Fixed width: max-w-[500px] with object-contain
+                  />
+                  
+                  {/* Badges */}
+                  <div className="absolute top-4 left-4 flex flex-col gap-2">
+                    {product.isSold ? (
+                      <span className="bg-red-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                        <Tag size={12} />
+                        SOLD
+                      </span>
+                    ) : (
+                      <>
+                        {product.year === 2026 && (
+                          <span className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                            <Award size={12} />
+                            New {product.year}
+                          </span>
+                        )}
+                        {discountPercentage > 0 && (
+                          <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                            <Tag size={12} />
+                            {discountPercentage}% OFF
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </div>
+
+                  {/* Sold Overlay */}
+                  {product.isSold && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span className="bg-red-500 text-white text-2xl font-['Poppins'] font-bold px-8 py-4 rounded-full transform -rotate-12 shadow-2xl">
+                        SOLD
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Right Column - Details */}
+              <div className="space-y-6 text-white">
+                {/* Title and SKU */}
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-['Poppins'] font-bold mb-2">
+                    {product.title}
+                  </h1>
+                  <p className="text-white/60 text-sm">SKU: {product.sku || 'N/A'}</p>
+                </div>
+
+                {/* Price */}
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <span className="text-4xl font-['Poppins'] font-bold text-yellow-300">
+                      ₹{product.price?.toLocaleString('en-IN') || 'N/A'}
+                    </span>
+                    {product.originalPrice && !product.isSold && (
+                      <span className="text-white/50 line-through text-lg">
+                        ₹{product.originalPrice?.toLocaleString('en-IN')}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Quick Info Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="bg-white/5 backdrop-blur-sm p-3 rounded-xl text-center border border-white/10">
+                    <Calendar size={18} className="mx-auto text-yellow-300 mb-1" />
+                    <p className="text-white/60 text-xs">Year</p>
+                    <p className="font-semibold text-sm">{product.year || 'N/A'}</p>
+                  </div>
+                  <div className="bg-white/5 backdrop-blur-sm p-3 rounded-xl text-center border border-white/10">
+                    <Ruler size={18} className="mx-auto text-yellow-300 mb-1" />
+                    <p className="text-white/60 text-xs">Size</p>
+                    <p className="font-semibold text-sm">{product.size || 'N/A'}</p>
+                  </div>
+                  <div className="bg-white/5 backdrop-blur-sm p-3 rounded-xl text-center border border-white/10">
+                    <Palette size={18} className="mx-auto text-yellow-300 mb-1" />
+                    <p className="text-white/60 text-xs">Medium</p>
+                    <p className="font-semibold text-sm line-clamp-1">{product.medium || 'Acrylic'}</p>
+                  </div>
+                  <div className="bg-white/5 backdrop-blur-sm p-3 rounded-xl text-center border border-white/10">
+                    <Award size={18} className="mx-auto text-yellow-300 mb-1" />
+                    <p className="text-white/60 text-xs">Category</p>
+                    <p className="font-semibold text-sm line-clamp-1">{product.category || 'N/A'}</p>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div className="bg-white/5 backdrop-blur-sm p-5 rounded-xl border border-white/10">
+                  <h3 className="font-['Poppins'] font-semibold mb-2 flex items-center gap-2">
+                    <Info size={18} className="text-yellow-300" />
+                    Description
+                  </h3>
+                  <p className="text-white/80 leading-relaxed">
+                    {product.description || `Beautiful ${product.title} artwork created with passion and precision. This stunning piece captures the essence of ${product.category} art.`}
                   </p>
-                ) : (
-                  <div className="space-y-2">
-                    <p><strong>SKU:</strong> {details.sku}</p>
-                    <p><strong>Artist:</strong> {details.artist}</p>
-                    <p><strong>Year:</strong> {details.year}</p>
-                    <p><strong>Medium:</strong> {details.medium}</p>
-                    <p><strong>Size:</strong> {details.size}</p>
-                    <p><strong>Frame:</strong> {details.frame}</p>
+                </div>
+
+                {/* Quantity - Hide if sold */}
+                {!product.isSold && (
+                  <div className="flex items-center gap-4">
+                    <span className="font-['Poppins']">Quantity:</span>
+                    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
+                      <button 
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="p-3 hover:bg-white/20 transition-colors rounded-l-lg"
+                      >
+                        <Minus size={16} />
+                      </button>
+                      <span className="w-12 text-center font-['Poppins'] font-semibold">{quantity}</span>
+                      <button 
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="p-3 hover:bg-white/20 transition-colors rounded-r-lg"
+                      >
+                        <Plus size={16} />
+                      </button>
+                    </div>
                   </div>
                 )}
+
+                {/* Action Buttons */}
+                {product.isSold ? (
+                  <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-6 text-center">
+                    <Tag size={32} className="mx-auto text-red-400 mb-3" />
+                    <p className="text-white font-['Poppins'] text-lg mb-2">This artwork has been sold</p>
+                    <p className="text-white/70 text-sm mb-4">Check out similar artworks in our gallery</p>
+                    <Link to="/gallery" className="inline-block px-6 py-3 bg-white text-[#667eea] rounded-lg hover:shadow-xl transition-all font-['Poppins']">
+                      Browse Gallery
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button 
+                      onClick={handleAddToCart}
+                      className="flex-1 px-6 py-4 bg-white text-[#667eea] font-['Poppins'] font-medium rounded-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      <ShoppingBag size={18} />
+                      {addedToCart ? '✓ ADDED TO CART!' : 'ADD TO CART'}
+                    </button>
+                    <button 
+                      onClick={handleWhatsApp}
+                      className="flex-1 px-6 py-4 bg-[#25D366] text-white font-['Poppins'] font-medium rounded-xl hover:bg-[#128C7E] hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+                    >
+                      <MessageCircle size={18} />
+                      BUY ON WHATSAPP
+                    </button>
+                  </div>
+                )}
+
+                {/* Action Icons */}
+                <div className="flex items-center gap-6 pt-4">
+                  <button className="flex items-center gap-2 text-white/70 hover:text-white transition-colors">
+                    <Heart size={18} />
+                    <span className="text-sm">Add to Wishlist</span>
+                  </button>
+                  <button className="flex items-center gap-2 text-white/70 hover:text-white transition-colors">
+                    <Share2 size={18} />
+                    <span className="text-sm">Share</span>
+                  </button>
+                </div>
+
+                {/* Shipping Info */}
+                <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/20">
+                  <div className="text-center">
+                    <Truck size={20} className="mx-auto text-yellow-300 mb-1" />
+                    <p className="text-white/80 text-xs">Free Shipping</p>
+                  </div>
+                  <div className="text-center">
+                    <Shield size={20} className="mx-auto text-yellow-300 mb-1" />
+                    <p className="text-white/80 text-xs">Authenticity</p>
+                  </div>
+                  <div className="text-center">
+                    <RotateCcw size={20} className="mx-auto text-yellow-300 mb-1" />
+                    <p className="text-white/80 text-xs">7 Day Returns</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Related Products */}
-        {IMAGES.filter(img => img.category === product.category && img.public_id !== product.public_id).length > 0 && (
-          <div className="related-products">
-            <h2 className="related-title">You May Also Like</h2>
-            <div className="related-grid">
-              {IMAGES.filter(img => img.category === product.category && img.public_id !== product.public_id)
-                .slice(0, 4)
-                .map((item) => (
-                  <Link 
-                    to={`/product/${item.public_id}`} 
-                    key={item.public_id}
-                    className="related-card"
-                  >
-                    <img 
-                      src={item.url} 
-                      alt={item.title}
-                      className="related-card-image"
-                    />
-                    <div className="related-card-info">
-                      <h3 className="related-card-title">{item.title}</h3>
-                      <p className="related-card-price">₹{item.price.toLocaleString('en-IN')}</p>
-                    </div>
-                  </Link>
-                ))}
+          {/* Related Products */}
+          {images.filter(img => img.category === product.category && img.public_id !== product.public_id).length > 0 && (
+            <div className="mt-12">
+              <h2 className="text-2xl font-['Poppins'] font-bold text-white mb-6">You May Also Like</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {images
+                  .filter(img => img.category === product.category && img.public_id !== product.public_id)
+                  .slice(0, 4)
+                  .map((item) => (
+                    <Link 
+                      to={`/product/${item.public_id}`} 
+                      key={item.public_id}
+                      className="bg-white/10 backdrop-blur-md rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 border border-white/20 relative"
+                    >
+                      <img 
+                        src={item.url} 
+                        alt={item.title}
+                        className="w-full h-40 object-cover"
+                      />
+                      {item.isSold && (
+                        <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                          Sold
+                        </div>
+                      )}
+                      <div className="p-3">
+                        <h3 className="text-white font-['Poppins'] text-sm font-semibold mb-1 truncate">
+                          {item.title}
+                        </h3>
+                        <p className="text-yellow-300 font-bold text-sm">
+                          {item.isSold ? 'Sold' : `₹${item.price?.toLocaleString('en-IN')}`}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

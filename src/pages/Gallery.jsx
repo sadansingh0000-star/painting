@@ -1,5 +1,5 @@
 import { useImages } from '../hooks/useImages';
-import { ShoppingBag, X } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
 import { useSearchParams, Link } from 'react-router-dom';
@@ -7,128 +7,139 @@ import { useSearchParams, Link } from 'react-router-dom';
 export default function Gallery() {
   const { images, loading } = useImages();
   const { addToCart } = useCart();
-  const [selectedImage, setSelectedImage] = useState(null);
   const [searchParams] = useSearchParams();
   const [activeFilter, setActiveFilter] = useState('all');
   
   const categoryFromUrl = searchParams.get('category');
-  const filterFromUrl = searchParams.get('filter');
   
-  const categories = ['all', ...new Set(images.map(img => img.category.toLowerCase()))];
+  // Get unique categories
+  const categories = ['all', ...new Set(images.map(img => img.category))];
   
   useEffect(() => {
     if (categoryFromUrl) {
       setActiveFilter(categoryFromUrl);
-    } else if (filterFromUrl) {
-      setActiveFilter(filterFromUrl);
     }
-  }, [categoryFromUrl, filterFromUrl]);
+  }, [categoryFromUrl]);
 
   const filtered = activeFilter === 'all' 
     ? images 
-    : images.filter(img => img.category.toLowerCase() === activeFilter);
+    : images.filter(img => img.category === activeFilter);
 
   const handleAddToCart = (item, e) => {
+    e.preventDefault();
     e.stopPropagation();
+    if (item.isSold) return;
     addToCart({
       id: item.public_id,
       title: item.title,
       price: item.price,
       image: item.url,
-      category: item.category
+      category: item.category,
+      quantity: 1
     });
   };
 
   if (loading) {
     return (
-      <div className="container-custom py-20 text-center">
-        <div className="animate-spin w-8 h-8 border-2 border-[#E14749] border-t-transparent rounded-full mx-auto"></div>
+      <div className="w-full min-h-screen bg-gradient-to-br from-[#667eea] to-[#764ba2] pt-20">
+        <div className="w-full px-4 py-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {[1,2,3,4,5,6,7,8].map(n => (
+              <div key={n} className="bg-white/10 backdrop-blur-sm h-80 rounded-xl animate-pulse"></div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <>
-      {/* Header */}
-      <div className="bg-white pt-24 pb-12 border-b">
-        <div className="container-custom text-center">
-          <h1 className="font-montserrat text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            ART GALLERY
+    <div className="w-full min-h-screen bg-gradient-to-br from-[#667eea] to-[#764ba2] pt-20">
+      <div className="w-full px-4 py-8">
+        {/* Header */}
+        <div className="w-full max-w-7xl mx-auto text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-['Poppins'] font-bold text-white mb-4">
+            Art Gallery
           </h1>
-          <p className="font-poppins text-gray-500">
-            {activeFilter === 'all' ? 'All Artworks' : `${activeFilter} Artworks`}
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">
+            Explore our collection of {images.length} original artworks
           </p>
         </div>
-      </div>
 
-      {/* Filters */}
-      <div className="bg-white border-b sticky top-16 z-40">
-        <div className="container-custom py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex gap-6 overflow-x-auto pb-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveFilter(cat)}
-                  className={`font-montserrat text-xs font-semibold tracking-wider uppercase whitespace-nowrap pb-2 border-b-2 transition-colors ${
-                    activeFilter === cat
-                      ? 'border-[#E14749] text-[#E14749]'
-                      : 'border-transparent text-gray-500 hover:text-gray-900'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-            <span className="font-poppins text-sm text-gray-500 hidden md:block">
-              {filtered.length} products
-            </span>
-          </div>
+        {/* Filters */}
+        <div className="w-full max-w-7xl mx-auto flex flex-wrap justify-center gap-3 mb-10">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveFilter(cat)}
+              className={`px-6 py-2 rounded-full text-sm font-['Poppins'] font-medium transition-all ${
+                activeFilter === cat
+                  ? 'bg-white text-[#667eea] shadow-lg'
+                  : 'bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 border border-white/20'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
-      </div>
 
-      {/* Gallery Grid */}
-      <section className="py-12">
-        <div className="container-custom">
-          {filtered.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="font-poppins text-gray-500">No artworks found in this category.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {filtered.map((item) => (
-                <div key={item.public_id} className="group">
-                  <Link to={`/product/${item.public_id}`}>
-                    <div className="relative overflow-hidden bg-gray-100 mb-3 rounded-lg">
-                      <img
-                        src={item.url}
-                        alt={item.title}
-                        className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
+        {/* Gallery Grid */}
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filtered.map((item) => (
+              <div key={item.public_id} className="group">
+                <Link to={`/product/${item.public_id}`}>
+                  <div className="relative bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20 hover:scale-105 transition-all duration-300">
+                    <img
+                      src={item.url}
+                      alt={item.title}
+                      className="w-full h-64 object-cover"
+                    />
+                    
+                    {/* Badges */}
+                    <div className="absolute top-3 left-3 flex flex-col gap-2">
+                      {item.isSold && (
+                        <span className="bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                          Sold
+                        </span>
+                      )}
+                      {item.year === 2026 && !item.isSold && (
+                        <span className="bg-yellow-400 text-xs font-semibold px-2 py-1 rounded-full">
+                          New
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Add to Cart Button */}
+                    {!item.isSold && (
                       <button 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleAddToCart(item, e);
-                        }}
-                        className="absolute bottom-3 right-3 w-10 h-10 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-[#E14749] hover:text-white"
+                        onClick={(e) => handleAddToCart(item, e)}
+                        className="absolute bottom-3 right-3 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:text-[#667eea]"
                       >
                         <ShoppingBag size={18} />
                       </button>
-                    </div>
-                  </Link>
+                    )}
+                  </div>
+                </Link>
+                
+                <div className="mt-3 text-white">
                   <Link to={`/product/${item.public_id}`}>
-                    <h3 className="font-montserrat text-sm font-semibold text-gray-900 mb-1 hover:text-[#E14749] transition-colors">
+                    <h3 className="font-['Poppins'] font-semibold hover:text-yellow-300 transition-colors line-clamp-1">
                       {item.title}
                     </h3>
                   </Link>
-                  <p className="font-poppins text-xs text-gray-500 mb-2">{item.category}</p>
-                  <p className="font-montserrat text-sm font-bold text-[#E14749]">₹{item.price}</p>
+                  <p className="text-white/60 text-sm">{item.category}</p>
+                  {item.isSold ? (
+                    <span className="text-red-400 font-semibold">Sold</span>
+                  ) : (
+                    <span className="font-bold text-yellow-300">₹{item.price.toLocaleString('en-IN')}</span>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
-      </section>
-    </>
+      </div>
+    </div>
   );
 }
