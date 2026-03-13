@@ -277,7 +277,7 @@ export default function ProductDetail() {
                 <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/20">
                   <div className="text-center">
                     <Truck size={20} className="mx-auto text-yellow-300 mb-1" />
-                    <p className="text-white/80 text-xs">Free Shipping</p>
+                    <p className="text-white/80 text-xs">Shipping at your home</p>
                   </div>
                   <div className="text-center">
                     <Shield size={20} className="mx-auto text-yellow-300 mb-1" />
