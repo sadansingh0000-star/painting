@@ -225,8 +225,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center text-white">
               <Truck size={40} className="mx-auto text-yellow-300 mb-4" />
-              <h3 className="font-['Poppins'] font-semibold text-xl mb-2">Free Shipping</h3>
-              <p className="text-white/80">On orders above ₹999</p>
+              <h3 className="font-['Poppins'] font-semibold text-xl mb-2">Before Shipping</h3>
+              <p className="text-white/80">Talk to us.</p>
             </div>
             <div className="text-center text-white">
               <Shield size={40} className="mx-auto text-yellow-300 mb-4" />
@@ -235,8 +235,8 @@ export default function Home() {
             </div>
             <div className="text-center text-white">
               <RotateCcw size={40} className="mx-auto text-yellow-300 mb-4" />
-              <h3 className="font-['Poppins'] font-semibold text-xl mb-2">Easy Returns</h3>
-              <p className="text-white/80">7 day return policy</p>
+              <h3 className="font-['Poppins'] font-semibold text-xl mb-2">Chat With Us on Whatsapp</h3>
+              <p className="text-white/80">Directly Connect with Us</p>
             </div>
           </div>
         </div>

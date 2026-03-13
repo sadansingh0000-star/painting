@@ -285,7 +285,7 @@ export default function ProductDetail() {
                   </div>
                   <div className="text-center">
                     <RotateCcw size={20} className="mx-auto text-yellow-300 mb-1" />
-                    <p className="text-white/80 text-xs">7 Day Returns</p>
+                    <p className="text-white/80 text-xs">Chat With Us Directly</p>
                   </div>
                 </div>
               </div>
