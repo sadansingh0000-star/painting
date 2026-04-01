@@ -2,7 +2,7 @@
 export const IMAGES = [
     {
     "public_id": "Sunset_Beach",
-    "url": "https://res.cloudinary.com/dllpxron7/image/upload/v1772821278/IMG-20260306-WA0025_cozmpa.jpg",
+    "url": "https://res.cloudinary.com/dllpxron7/image/upload/q_auto/f_auto/v1775055027/IMG-20260401-WA0007_mxrpbp.jpg",
     "title": "Autumn Landscape",
     "category": "Medium-Acrylic",
     "price": 1999,
