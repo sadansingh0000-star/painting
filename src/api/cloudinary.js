@@ -1,5 +1,19 @@
 // Yeh tumhari saari images ka data hai - direct load, no cache
 export const IMAGES = [
+    {
+    "public_id": "Sunset_Beach",
+    "url": "https://res.cloudinary.com/dllpxron7/image/upload/v1772821278/IMG-20260306-WA0025_cozmpa.jpg",
+    "title": "Autumn Landscape",
+    "category": "Medium-Acrylic",
+    "price": 1999,
+    "originalPrice": 1999,
+    "sku": "SKU# ",
+    "year": 2024,
+    "size": "16 x 20 inches",
+    "description": "Medium-Acrylic on Stretched canvas",
+    "medium": "Acrylic on Canvas",
+    "isSold": false
+  },
   {
     "public_id": "Sunset_Beach",
     "url": "https://res.cloudinary.com/dllpxron7/image/upload/v1772821278/IMG-20260306-WA0025_cozmpa.jpg",
