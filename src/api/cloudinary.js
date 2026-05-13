@@ -1,6 +1,20 @@
 // Yeh tumhari saari images ka data hai - direct load, no cache
 export const IMAGES = [
     {
+    "public_id": "Wild Flower",
+    "url": "https://res.cloudinary.com/dllpxron7/image/upload/q_auto/f_auto/v1775055027/IMG-20260401-WA0007_mxrpbp.jpg",
+    "title": "Wild Flower",
+    "category": "Medium",
+    "price": 2999,
+    "originalPrice": 3299,
+    "sku": "SKU# ",
+    "year": "",
+    "size": "18 x 30 inches",
+    "description": "Medium-oil on canvas paper",
+    "medium": "Acrylic on Canvas",
+    "isSold": false
+    },
+    {
     "public_id": "Sunset_Beach",
     "url": "https://res.cloudinary.com/dllpxron7/image/upload/q_auto/f_auto/v1775055027/IMG-20260401-WA0007_mxrpbp.jpg",
     "title": "Autumn Landscape",
