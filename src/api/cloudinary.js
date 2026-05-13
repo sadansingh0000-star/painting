@@ -2,9 +2,9 @@
 export const IMAGES = [
     {
     "public_id": "Wild Flower",
-    "url": "https://res.cloudinary.com/dllpxron7/image/upload/q_auto/f_auto/v1775055027/IMG-20260401-WA0007_mxrpbp.jpg",
+    "url": "https://res.cloudinary.com/dllpxron7/image/upload/v1778648320/motion_photo_4398328002698571652_jxmvau.jpg",
     "title": "Wild Flower",
-    "category": "Medium",
+    "category": "Medium-Acrylic",
     "price": 2999,
     "originalPrice": 3299,
     "sku": "SKU# ",
