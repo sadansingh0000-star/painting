@@ -2,7 +2,7 @@
 export const IMAGES = [
     {
     "public_id": "Krishana",
-    "url": "https://res.cloudinary.com/dllpxron7/image/upload/v1778648320/motion_photo_4398328002698571652_jxmvau.jpg",
+    "url": "https://res.cloudinary.com/dllpxron7/image/upload/v1778963108/IMG-20260516-WA0002_d2gw3z.jpg",
     "title": "Krishana",
     "category": "Medium-Acrylic",
     "price": 15000,
