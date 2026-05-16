@@ -4,7 +4,7 @@ export const IMAGES = [
     "public_id": "Wild Flower",
     "url": "https://res.cloudinary.com/dllpxron7/image/upload/v1778648320/motion_photo_4398328002698571652_jxmvau.jpg",
     "title": "Wild Flower",
-    "category": "Medium-Acrylic",
+    "category": "Medium-Oil",
     "price": 2999,
     "originalPrice": 3299,
     "sku": "SKU# ",
